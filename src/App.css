@@ -1,3 +1,13 @@
+#root {
+  margin: 0 auto;
+  --green: #1db954;
+  --black: #121212;
+  --lightblack: #212121;
+  --gray: #535353;
+  --lightgray: #b3b3b3;
+  background-color: var(--black);
+}
+
 .App {
   text-align: center;
   margin-top: 2rem;
@@ -15,18 +25,17 @@
 }
 
 .App-header {
-  background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  
 }
 
 .App-link {
-  color: #61dafb;
+  color: var(--green);
 }
 
 @keyframes App-logo-spin {
@@ -36,4 +45,107 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.Albums {
+  padding-bottom: 2rem;
+}
+
+ .Artists {
+  padding-bottom: 1rem;
+}
+
+
+.custom-search-bar {
+  background-color: #1c1c1c;
+  border-radius: 20px;
+  padding: 5px 15px;
+  display: flex;
+  align-items: center;
+}
+.custom-search-bar .form-control::placeholder {
+  color: #aaa;
+}
+.custom-search-bar button {
+  color: #aaa;
+}
+
+
+nav {
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+  padding: 1rem;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+}
+
+nav li{
+  display: inline; 
+  margin: 0 15px;
+}
+
+nav a {
+  color: var(--lightgray);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 3px;
+  transition: color 0.3s;
+}
+
+nav a:hover {
+  text-shadow: 1px 2px 30px #f9f9f9;
+}
+
+nav a.active {
+  color: var(--green);
+  text-shadow: 0px 2px 50px #f9f9f9;
+}
+
+/* Search Bar */
+.custom-search-bar {
+  background-color: #1c1c1c;
+  border-radius: 20px;
+  padding: 5px 15px;
+  display: flex;
+  align-items: center;
+}
+
+.custom-search-bar .form-control {
+  background: transparent;
+  border: none;
+  color: white;
+  box-shadow: none;
+}
+
+.custom-search-bar .form-control::placeholder {
+  color: #aaa;
+}
+
+/* Ensure the styles remain intact when the input is focused */
+.custom-search-bar .form-control:focus {
+  background: transparent;
+  border: none;
+  color: white;
+  box-shadow: none; /* Prevent default Bootstrap focus shadow */
+  outline: none; /* Prevent browser outline */
+}
+
+.custom-search-bar button {
+  background-color: transparent;
+  border: none;
+  color: #aaa;
+}
+
+.custom-search-bar button:hover {
+  color: white; /* Optional: Change button color on hover */
 }

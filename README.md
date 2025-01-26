@@ -1,70 +1,94 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import {Container, InputGroup, FormControl, Button, Row, Card} from 'react-bootstrap';
+import { useState, useEffect } from 'react';
 
-## Available Scripts
+const CLIENT_ID = "777c571d7da6439aaf522a3c54cbef52";
+const CLIENT_SECRET = "854ab52143794b74a136f7b1396662fc";
 
-In the project directory, you can run:
+function App() {
+  const [searchInput, setSearchInput] = useState("");
+  const [accessToken, setAccessToken] = useState("");
+  const [albums, setAlbums] = useState([])
 
-### `npm start`
+  useEffect(() => {
+    //API access token
+    var authParameters = {
+      method : 'POST',
+      headers : {
+        'Content-Type' : 'application/x-www-form-urlencoded'
+      },
+      body : 'grant_type=client_credentials&client_id=' + CLIENT_ID + '&client_secret=' +CLIENT_SECRET
+    }
+    fetch('https://accounts.spotify.com/api/token', authParameters)
+      .then(result => result.json())
+      .then(data => setAccessToken(data.access_token))
+  }, [])
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+  //Search
+    async function search() {
+      console.log("Search for " + searchInput)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+    //GET req using search tp set the Artist ID
+      var searchParameters = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + accessToken
+        }
+      }
+      var artistID = await fetch('https://api.spotify.com/v1/search?q=' + searchInput + '&type=artist', searchParameters)
+        .then(response => response.json())
+        .then(data => {return data.artists.items[0].id})
 
-### `npm test`
+      console.log("ArtistId is" + artistID);
+    //GET req with Artist to grab the album from that artist
+      var returnedAlbums = await fetch('https://api.spotify.com/v1/artists/' + artistID + '/albums' + '?include_groups=album&market=US&limit=50', searchParameters)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          setAlbums(data.items);
+        });
+    //Display those albums
+    }
+  console.log(albums)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  return (
+    <div className="App">
+      <Container>
+        <InputGroup className='mb-3' size='lg' >
+          <FormControl
+          placeholder='Search for Artist'
+          type='input'
+          onKeyPress={event => {
+            if(event.key === "Enter") {
+              search();
+            }
+          }}
+          onChange={event => setSearchInput(event.target.value)}
+          />
+          <Button onClick={search}>
+            Search
+          </Button>
+        </InputGroup>
+      </Container>
+      <Container>
+        <Row className='mx-2 row row-cols-4'>
+          {albums.map( (album, i) => {
+            console.log(album)
+            return(
+              <Card className='p-2'>
+                <Card.Img src={album.images[0].url} />
+                <Card.Title>{album.name}</Card.Title>
+                <Card.Body></Card.Body>
+              </Card>  
+            )
+          })}
+        </Row>
+      </Container>
+    </div>
+  );
+}
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+export default App;
